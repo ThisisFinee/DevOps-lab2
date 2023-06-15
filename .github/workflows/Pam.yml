@@ -1,0 +1,82 @@
+
+name: Python application
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  exe_builder:
+
+      runs-on: windows-latest
+
+
+      steps:
+
+        - name: Send greeting
+          run: echo "Hello World!"
+        - uses: actions/checkout@v3
+        - name: install pyinstaller
+          run: pip install pyinstaller
+        - name: use pyinstaller
+          run: |
+            pyinstaller --onefile main.py
+            echo "OK"
+            dir
+        - name: Path exe
+          uses: actions/upload-artifact@v3
+          with:
+            name: Path to exe
+            path: |
+              main.spec
+        - name: go next
+          run: |
+            cd dist
+            dir
+        - name: Exe in
+          uses: actions/upload-artifact@v3
+          with:
+            name: Exe
+            path: |
+              main.exe
+              D:\a\CreatePipeline\CreatePipeline\dist\main.exe
+
+  Upload_artifacts:
+      needs: exe_builder
+      runs-on: ubuntu-latest
+
+      steps:
+        - name: Add artifact
+          uses: actions/download-artifact@v3
+        - name: Check
+          run: ls
+        - name: upload to google drive
+          uses: adityak74/google-drive-upload-git-action@main
+          with:
+            credentials: ${{ secrets.CREDENTIALS }}
+            filename: Exe/dist/*
+            folderId: ${{ secrets.FOLDERID }}
+            overwrite: "true"
+  build:
+      runs-on: ubuntu-latest
+
+      steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 pytest
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Lint with flake8
+        run: |
+          # stop the build if there are Python syntax errors or undefined names
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
