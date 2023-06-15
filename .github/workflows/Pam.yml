@@ -59,7 +59,8 @@ jobs:
             filename: Exe/dist/*
             folderId: ${{ secrets.FOLDERID }}
             overwrite: "true"
-  build:
+  code_state:
+      needs: exe_builder
       runs-on: ubuntu-latest
 
       steps:
@@ -71,9 +72,13 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install flake8 pytest
+          pip install flake8 
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+#       - name: Add artifact
+#         uses: actions/download-artifact@v3
+      - name: Check
+        run: ls
       - name: Lint with flake8
         run: |
           # stop the build if there are Python syntax errors or undefined names
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 main --count --select=E9,F63,F7,F82 --show-source --statistics
