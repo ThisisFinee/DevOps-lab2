@@ -41,7 +41,7 @@ jobs:
             name: Exe
             path: |
               main.exe
-              D:\a\CreatePipeline\CreatePipeline\dist\main.exe
+              D:\a\DevOps-lab2\DevOps-lab2\dist\main.exe
 
   Upload_artifacts:
       needs: exe_builder
