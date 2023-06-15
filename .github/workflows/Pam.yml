@@ -59,23 +59,19 @@ jobs:
             filename: Exe/dist/*
             folderId: ${{ secrets.FOLDERID }}
             overwrite: "true"
-  code_state:
-      needs: exe_builder
-      name: Python Lint
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v3
-        - uses: actions/setup-python@v4
-          with:
-            python-version: "3.9"
-        - name: Check
-          run: ls
-        - name: Run flake8
-          uses: julianwachholz/flake8-action@v2
-          with:
-            checkName: "Python Lint"
-            path: main.py
-            plugins: flake8-spellcheck
-            config: flake8.ini
-        - name: Checkv2
-          run: ls
+  flake8_py3:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Setup Python
+            uses: actions/setup-python@v1
+            with:
+              python-version: 3.7.4
+              architecture: x64
+          - name: Checkout PyTorch
+            uses: actions/checkout@master
+          - name: Install flake8
+            run: pip install flake8
+          - name: Run flake8
+            uses: suo/flake8-github-action@releases/v1
+            with:
+              checkName: 'flake8_py3'
