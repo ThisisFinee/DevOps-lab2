@@ -72,7 +72,10 @@ jobs:
             run: |
               flake8 main.py
               echo "OK"
+          - name: create text art
+            run: |
               echo "https://wemake-python-styleguide.rtfd.io/en/0.18.0/pages/usage/violations/" > res.txt
+              ls
           - name: add https artifact
             uses: actions/upload-artifact@v3
             with:
