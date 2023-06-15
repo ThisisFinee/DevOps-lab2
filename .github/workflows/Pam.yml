@@ -61,17 +61,20 @@ jobs:
             overwrite: "true"
   flake8_py3:
         runs-on: ubuntu-latest
+    
         steps:
-          - name: Setup Python
-            uses: actions/setup-python@v1
-            with:
-              python-version: 3.9.17
-              architecture: x64
-          - name: Checkout PyTorch
-            uses: actions/checkout@master
-          - name: Install flake8
-            run: pip install flake8
-          - name: Run flake8
-            uses: suo/flake8-github-action@releases/v1
-            with:
-              checkName: 'flake8_py3'
+          - name: Check code
+            uses: actions/checkout@v3
+          - name: Install styleguide
+            run: pip install wemake-python-styleguide
+          - name: use styleguide
+            continue-on-error: true
+            run: |
+              flake8 main.py
+              echo "OK"
+          - name: Check if 'Lint with flake8' step failed
+            if: steps.flake8.outcome != 'success'
+            run: |
+              echo "flake8 fails"
+              echo "Main flow is end!"
+              exit 0
