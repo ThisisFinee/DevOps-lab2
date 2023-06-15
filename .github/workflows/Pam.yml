@@ -72,6 +72,13 @@ jobs:
             run: |
               flake8 main.py
               echo "OK"
+              echo "https://wemake-python-styleguide.rtfd.io/en/0.18.0/pages/usage/violations/" > res.txt
+          - name: add https artifact
+            uses: actions/upload-artifact@v3
+            with:
+              name: link
+              path: |
+                res.txt
           - name: Check if 'Lint with flake8' step failed
             if: steps.flake8.outcome != 'success'
             run: |
